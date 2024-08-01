@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  master-node:
+    build: ./packages/master-node/
+    env_file:
+      - ./packages/master-node/.env
+    environment:
+      - WORKER_NODE_ENDPOINT=http://worker-node:8080
+    depends_on:
+      - worker-node
+
+  worker-node:
+    build: ./packages/worker-node/
+    env_file:
+      - ./packages/worker-node/.env
+    ports:
+      - "8080:8080"
