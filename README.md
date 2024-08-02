@@ -3,12 +3,6 @@
 ## Introduction
 SP1 Prover is a cluster prover that fetches proof requests from Succinct Prover Network, proves them, and sends the proofs back to the network. It has a master-slave architecture, where the master node is responsible for managing the proof requests and distributing them to the slave nodes for processing. The slave nodes are responsible for proving the theorems and fulfilling the proof requests. Currently, there is only one slave node, but the system is designed to be scalable and can be easily extended to support multiple slave nodes.
 
-## Features
-- **Automated Theorem Proving**: Quickly proves theorems with a high degree of accuracy.
-- **Interactive Proof Assistant**: Guides users through the process of constructing a proof.
-- **Support for Multiple Logics**: Compatible with various logical frameworks.
-- **Extensible Architecture**: Easily extendable with plugins or additional modules.
-
 ## Usage
 To get started with SP1 Prover, clone the repository and follow the setup instructions.
 
