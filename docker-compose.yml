@@ -6,13 +6,20 @@ services:
     env_file:
       - ./packages/master-node/.env
     environment:
+      - PROVER_NETWORK_RPC=http://host.docker.internal:54000
       - WORKER_NODE_ENDPOINT=http://worker-node:8080
     depends_on:
       - worker-node
+    extra_hosts:
+      - host.docker.internal:host-gateway
 
   worker-node:
     build: ./packages/worker-node/
     env_file:
       - ./packages/worker-node/.env
+    environment:
+      - PROVER_NETWORK_RPC=http://host.docker.internal:54000
     ports:
       - "8080:8080"
+    extra_hosts:
+      - host.docker.internal:host-gateway
