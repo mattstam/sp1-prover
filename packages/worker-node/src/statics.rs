@@ -1,3 +1,5 @@
+//! Statics used throughout the worker node.
+
 use aws_sdk_s3::Client as S3Client;
 use lazy_static::lazy_static;
 use reqwest::Client;
@@ -21,13 +23,9 @@ lazy_static! {
     pub static ref HTTP_CLIENT_WITH_MIDDLEWARE: Mutex<ClientWithMiddleware> = Mutex::new({
         let reqwest_client = Client::new();
 
-        // Create a retry policy
         let retry_policy = ExponentialBackoff::builder().build_with_max_retries(3);
-
-        // Create the middleware with the retry policy
         let retry_middleware = RetryTransientMiddleware::new_with_policy(retry_policy);
 
-        // Wrap the reqwest client with the middleware to create a `ClientWithMiddleware`
         ClientBuilder::new(reqwest_client)
             .with(retry_middleware)
             .build()

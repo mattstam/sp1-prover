@@ -1,3 +1,5 @@
+//! Worker node for the proof generation.
+
 extern crate dotenv;
 
 mod artifact;
@@ -14,6 +16,7 @@ use crate::server::start_server;
 async fn main() {
     dotenv().ok();
 
+    // Start the server.
     loop {
         match start_server().await {
             Ok(_) => (),

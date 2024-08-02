@@ -4397,6 +4397,7 @@ dependencies = [
  "dotenv",
  "futures",
  "lazy_static",
+ "log",
  "prost",
  "reqwest 0.12.5",
  "reqwest-middleware",
@@ -5615,6 +5616,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "dotenv",
+ "log",
  "reqwest 0.12.5",
  "serde",
  "serde_json",

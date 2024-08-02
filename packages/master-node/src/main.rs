@@ -1,4 +1,4 @@
-//! A simple script to generate and verify the proof of a given program.
+//! Master node is responsible for listening to the proof requests and sending them to the worker node to generate the proof.
 extern crate dotenv;
 
 mod listener;
@@ -18,5 +18,8 @@ async fn main() {
                 println!("Error: {:?}", e);
             }
         }
+
+        // Wait for 1 second before fetching proof requests again.
+        tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
     }
 }

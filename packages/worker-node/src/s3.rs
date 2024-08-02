@@ -1,3 +1,5 @@
+//! S3 operations for artifacts.
+
 use anyhow::Result;
 use aws_config::{retry::RetryConfig, BehaviorVersion};
 use aws_sdk_s3::{
@@ -18,6 +20,7 @@ use crate::{
 
 const CHUNK_SIZE: usize = 16 * 1024 * 1024;
 
+/// Get an S3 client.
 async fn get_s3_client() -> &'static S3Client {
     S3_CLIENT
         .get_or_init(|| async {
@@ -32,6 +35,7 @@ async fn get_s3_client() -> &'static S3Client {
         .await
 }
 
+/// Download a file from S3 using parallelization.
 async fn par_download_file<T: DeserializeOwned>(client: &S3Client, id: &str) -> Result<T> {
     let key = format!("artifacts/{}", id);
     let size = client
@@ -74,6 +78,7 @@ async fn par_download_file<T: DeserializeOwned>(client: &S3Client, id: &str) -> 
     Ok(deserialized)
 }
 
+/// Upload a file to S3 using parallelization.
 async fn par_upload_file<T: Serialize>(client: &S3Client, id: &str, item: T) -> Result<()> {
     let data = debug_span!("serialize").in_scope(|| bincode::serialize(&item))?;
     let key = format!("artifacts/{}", id);
