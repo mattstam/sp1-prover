@@ -15,6 +15,7 @@ use crate::server::start_server;
 #[tokio::main]
 async fn main() {
     dotenv().ok();
+    env_logger::init();
 
     // Start the server.
     loop {

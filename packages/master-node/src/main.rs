@@ -6,10 +6,14 @@ mod listener;
 use crate::listener::listener;
 
 use dotenv::dotenv;
+use log::info;
 
 #[tokio::main]
 async fn main() {
     dotenv().ok();
+    env_logger::init();
+
+    info!("Starting master node server.");
 
     loop {
         match listener().await {

@@ -37,7 +37,14 @@ To get started with SP1 Prover, clone the repository and follow the setup instru
     ```
 
 ## Downloading Artifacts
-As of now, AWS credentials for the Succinct Prover Network are required to download the necessary artifacts. Alternatively, you can set up and run your own instance of the network to bypass this requirement. Succinct is exploring options to streamline the artifact download process in the future.
+The prover cluster requires integration with a prover network to process proof requests and submit proofs. This necessitates AWS credentials, whether you are accessing the Succinct Prover Network or running your own network instance. Ensure you provide the necessary AWS credentials by updating the environment variables in `packages/worker-node/.env`:
+```plaintext
+S3_BUCKET=<your-s3-bucket-name>
+AWS_REGION=<your-aws-region>
+AWS_ACCESS_KEY_ID=<your-access-key-id>
+AWS_SECRET_ACCESS_KEY=<your-secret-access-key>
+```
+Please replace the placeholder values with your actual AWS credentials. The current system mandates these credentials to facilitate the download of required artifacts. Succinct is considering more streamlined approaches for artifact acquisition in future updates.
 
 ## Docker Build Time
 The build time for the Docker image can be quite long due to the installation of various dependencies, mainly due to the `native-gnark` feature in `sp1-sdk`. This is a one-time process and subsequent builds will be faster due to caching.

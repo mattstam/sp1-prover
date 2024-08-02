@@ -24,3 +24,4 @@ twirp = { package = "twirp-rs", version = "0.3.0-succinct" }
 reqwest = "0.12.5"
 reqwest-retry = "0.6.0"
 log = "0.4.22"
+env_logger = "0.11.5"
