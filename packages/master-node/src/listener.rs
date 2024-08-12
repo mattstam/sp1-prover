@@ -2,11 +2,15 @@ use anyhow::Result;
 use log::info;
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
-use sp1_sdk::{network::client::NetworkClient, proto::network::ProofStatus};
+use sp1_sdk::{
+    network::client::NetworkClient,
+    proto::network::{ProofMode, ProofStatus},
+};
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct ProofRequest {
     pub proof_id: String,
+    pub mode: ProofMode,
     pub program_artifact_id: String,
     pub stdin_artifact_id: String,
     pub proof_artifact_id: String,
@@ -19,6 +23,7 @@ pub async fn listener() -> Result<()> {
     // Create a new HTTP client and network client.
     let http_client = Client::new();
     let network_client = NetworkClient::new(&std::env::var("SP1_PRIVATE_KEY").unwrap());
+    let worker_node_endpoint = std::env::var("WORKER_NODE_ENDPOINT")?;
 
     // Get proof requests with status ProofRequested.
     let proof_requests = network_client
@@ -26,7 +31,7 @@ pub async fn listener() -> Result<()> {
         .await?;
 
     // If there are proof requests, claim the first one and send it to the worker API endpoint.
-    if proof_requests.proofs.len() > 0 {
+    if !proof_requests.proofs.is_empty() {
         let proof_request = proof_requests.proofs[0].clone();
         let claim_proof_res = network_client.claim_proof(&proof_request.proof_id).await?;
         info!(
@@ -37,6 +42,8 @@ pub async fn listener() -> Result<()> {
         // Create ProofRequest object.
         let proof_request = ProofRequest {
             proof_id: proof_request.proof_id,
+            mode: ProofMode::try_from(proof_request.mode)
+                .map_err(|_| anyhow::anyhow!("Invalid proof mode: {}", proof_request.mode))?,
             program_artifact_id: claim_proof_res.program_artifact_id,
             stdin_artifact_id: claim_proof_res.stdin_artifact_id,
             proof_artifact_id: claim_proof_res.proof_artifact_id,
@@ -48,7 +55,7 @@ pub async fn listener() -> Result<()> {
 
         // Send the proof request to the worker API endpoint.
         let response = http_client
-            .post(std::env::var("WORKER_NODE_ENDPOINT")? + "/prove")
+            .post(worker_node_endpoint + "/prove")
             .header("Content-Type", "application/json")
             .body(proof_request_json)
             .send()
@@ -61,6 +68,8 @@ pub async fn listener() -> Result<()> {
             "Proof with ID '{}' has been successfully generated in {} seconds.",
             proof_request.proof_id, proving_seconds
         );
+    } else {
+        info!("No proof requests found.");
     }
 
     Ok(())

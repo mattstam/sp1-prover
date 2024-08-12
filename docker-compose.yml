@@ -1,13 +1,11 @@
-version: '3.8'
-
 services:
   master-node:
     build: ./packages/master-node/
     env_file:
       - ./packages/master-node/.env
     environment:
-      # Set PROVER_NETWORK_RPC only if using a local prover network
-      - PROVER_NETWORK_RPC=http://host.docker.internal:54000
+      - RUST_LOG=info
+      - RUST_BACKTRACE=1
       - WORKER_NODE_ENDPOINT=http://worker-node:8080
     depends_on:
       - worker-node
@@ -19,9 +17,9 @@ services:
     build: ./packages/worker-node/
     env_file:
       - ./packages/worker-node/.env
-    # Set PROVER_NETWORK_RPC only if using a local prover network
     environment:
-      - PROVER_NETWORK_RPC=http://host.docker.internal:54000
+      - RUST_LOG=info
+      - RUST_BACKTRACE=1
     ports:
       - "8080:8080"
     # Define extra_hosts only if using a local prover network
