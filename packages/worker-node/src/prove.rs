@@ -21,18 +21,21 @@ pub struct ProofRequest {
 }
 
 /// Fetch the program and stdin artifacts from S3.
-async fn fetch_artifacts(proof_req: ProofRequest) -> Result<(Vec<u8>, SP1Stdin)> {
+async fn fetch_artifacts(
+    program_artifact_id: String,
+    stdin_artifact_id: String,
+) -> Result<(Vec<u8>, SP1Stdin)> {
     let http_client = HTTP_CLIENT_WITH_MIDDLEWARE.lock().unwrap().clone();
 
     // Fetch the program artifact.
-    let program_artifact = Artifact::new(&proof_req.program_artifact_id, "program");
+    let program_artifact = Artifact::new(&program_artifact_id, "program");
     let program: Vec<u8> = program_artifact
         .download(&http_client)
         .await
         .map_err(anyhow::Error::from)?;
 
     // Fetch the stdin artifact.
-    let stdin_artifact = Artifact::new(&proof_req.stdin_artifact_id, "stdin");
+    let stdin_artifact = Artifact::new(&stdin_artifact_id, "stdin");
     let stdin = stdin_artifact
         .download::<SP1Stdin>(&http_client)
         .await
@@ -49,11 +52,13 @@ pub async fn generate_proof(proof_req: ProofRequest, client: Arc<ProverClient>) 
     );
 
     // Fetch the program and stdin artifacts.
-    let (program, stdin) = fetch_artifacts(proof_req.clone()).await?;
+    let (program, stdin) =
+        fetch_artifacts(proof_req.program_artifact_id, proof_req.stdin_artifact_id).await?;
 
-    // Generate the proof.
+    // Setup the proving key.
     let (pk, _) = client.setup(&program);
 
+    // Generate the proof.
     let proof = tokio::task::spawn_blocking(move || match proof_req.mode {
         ProofMode::Unspecified => Err(anyhow::anyhow!("Unspecified proof mode is not valid")),
         ProofMode::Core => client.prove(&pk, stdin).run(),
