@@ -30,7 +30,7 @@ async fn main() {
     tokio::task::spawn_blocking(move || {
         let start_time = std::time::Instant::now();
         // TODO: detect if it finished correctly or not.
-        sp1_sdk::install::try_install_plonk_bn254_artifacts();
+        sp1_sdk::install::try_install_circuit_artifacts();
         plonk_available_clone.store(true, std::sync::atomic::Ordering::Relaxed);
         let elapsed = start_time.elapsed();
         log::info!(

@@ -64,6 +64,7 @@ pub async fn generate_proof(proof_req: ProofRequest, client: Arc<ProverClient>) 
         ProofMode::Core => client.prove(&pk, stdin).run(),
         ProofMode::Compressed => client.prove(&pk, stdin).compressed().run(),
         ProofMode::Plonk => client.prove(&pk, stdin).plonk().run(),
+        ProofMode::Groth16 => client.prove(&pk, stdin).groth16().run(),
     })
     .await??;
 

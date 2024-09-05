@@ -7,7 +7,7 @@ edition = "2021"
 actix-web = "4.8.0"
 dotenv = "0.15.0"
 tokio = { version = "1.0", features = ["full"] }
-sp1-sdk = { git = "https://github.com/succinctlabs/sp1.git", branch = "john/integrate-gpu-into-sdk", features = [
+sp1-sdk = { git = "https://github.com/succinctlabs/sp1.git", rev = "93d64fdececd01683368c907919df8b37849653c", features = [
 	"network",
 	"native-gnark",
 	"cuda",
